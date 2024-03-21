@@ -19,7 +19,11 @@ export class Wallet {
         this.keys = new Array<string>();
         this.users = new Array<string>();
     }
-
+    
+    /**
+     * load the wallet from the ledger.
+     * @returns true if the wallet was loaded successfully, false otherwise.
+     */
     load(): boolean {
         let walletTable = Ledger.getTable(WalletTable).get("ALL");
         if (walletTable.length == 0) {
@@ -32,13 +36,20 @@ export class Wallet {
         emit("Wallet loaded successfully: " + walletTable);
         return true;
     }
-
+ 
+    /**
+     * save the wallet to the ledger.
+     */
     save(): void {
         let walletTable = JSON.stringify<Wallet>(this);
         Ledger.getTable(walletTable).set("ALL", walletTable);
         emit("Wallet saved successfully: " + walletTable);
     }
 
+    /**
+     * rename the wallet.
+     * @param newName 
+     */
     rename(newName: string): void {        
         if (!this.senderIsAdmin())
         {
@@ -53,7 +64,6 @@ export class Wallet {
      * Create a wallet with the given name.
      * Also adds the sender as an admin user.
      * @param name 
-     * @returns 
      */
     create(name: string): void {
         this.name = name;
@@ -152,6 +162,10 @@ export class Wallet {
         emit(`Keys in the wallet: ${keys}`);
     }
 
+    /**
+     * reset the wallet to its initial state.
+     * @returns 
+     */
     reset(): void {
         if (!this.senderIsAdmin())
         {
