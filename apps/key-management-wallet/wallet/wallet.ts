@@ -51,7 +51,7 @@ export class Wallet {
     rename(oldName: string, newName: string): void {        
         if (!this.senderIsAdmin())
         {
-            revert("You are not allowed to add a user");
+            revert("You are not allowed to rename the wallet");
             return;
         }
         if (this.name != oldName) {
