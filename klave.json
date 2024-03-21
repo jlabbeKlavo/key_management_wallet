@@ -5,8 +5,8 @@
     ],
     "applications": [
         {
-            "name": "Klave-Examples",
-            "slug": "ksamples",
+            "name": "Key-Management-Wallet",
+            "slug": "kmWallet",
             "version": "0.0.1",
             "rootDir": "/apps/key-management-wallet"
         }
