@@ -153,11 +153,15 @@ export class Wallet {
             return;
         }
 
-        let keys = new Array<Key>();
-        for (let key of this.keys) {
+        let keys: string = "";
+        for (let i = 0; i < this.keys.length; i++) {
+            let key = this.keys[i];
             let keyObj = new Key(key);
             keyObj.load();
-            keys.push(keyObj);              
+            if (keys.length > 0) {
+                keys += ", ";
+            }
+            keys += JSON.stringify<Key>(keyObj);            
         }
         emit(`Keys in the wallet: ${keys}`);
     }
