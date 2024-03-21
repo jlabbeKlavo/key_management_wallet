@@ -207,7 +207,7 @@ export class Wallet {
     sign(keyId: string, payload: string): string | null {
         if (!this.senderIsRegistered())
         {
-            emit("You are not allowed to add a user");
+            emit("You are not allowed to sign a message/access this wallet");
             return null;
         }
         let key = new Key(keyId);
@@ -226,7 +226,7 @@ export class Wallet {
     verify(keyId: string, payload: string, signature: string): boolean {
         if (!this.senderIsRegistered())
         {
-            emit("You are not allowed to add a user");
+            emit("You are not allowed to verify a signature/access this wallet");
             return false;
         }
         let key = new Key(keyId);
@@ -244,7 +244,7 @@ export class Wallet {
     addKey(description: string, type: string): boolean {
         if (!this.senderIsRegistered())
         {
-            emit("You are not allowed to add a user");
+            emit("You are not allowed to add a key/access this wallet");
             return false;
         }
         let key = new Key("");
@@ -262,7 +262,7 @@ export class Wallet {
     removeKey(keyId: string): boolean {
         if (!this.senderIsRegistered())
         {
-            emit("You are not allowed to add a user");
+            emit("You are not allowed to remove a key/access this wallet");
             return false;
         }
         let key = new Key(keyId);
@@ -274,6 +274,38 @@ export class Wallet {
         let index = this.keys.indexOf(keyId);
         this.keys.splice(index, 1);
         return true;
+    }
+
+    /**
+     * encrypt a message with the given key.
+     */
+    encrypt(keyId: string, message: string): string | null {
+        if (!this.senderIsRegistered())
+        {
+            emit("You are not allowed to encrypt a message/access this wallet");
+            return null;
+        }
+        let key = new Key(keyId);
+        if (!key.load()) {
+            return null;
+        }
+        return key.encrypt(message);        
+    }
+
+    /**
+     * encrypt a message with the given key.
+     */
+    decrypt(keyId:string, cypher: string): string | null{
+        if (!this.senderIsRegistered())
+        {
+            emit("You are not allowed to encrypt a message/access this wallet");
+            return null;
+        }
+        let key = new Key(keyId);
+        if (!key.load()) {
+            return null;
+        }
+        return key.decrypt(cypher);        
     }
 
 }

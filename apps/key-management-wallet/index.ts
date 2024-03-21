@@ -151,3 +151,39 @@ export function listKeys(input: ListKeysInput): void {
     }
     wallet.listKeys(input.user);
 }
+
+/**
+ * @query encrypt a message with the given key
+ * @param keyId: string
+ * @param message: string
+ */
+export function encrypt(input: SignInput): void {
+    let wallet = new Wallet();
+    if (!wallet.load()) {
+        return;
+    }
+    let encrypted = wallet.encrypt(input.keyId, input.payload);
+    if (encrypted == null) {
+        emit("Failed to encrypt");
+        return;
+    }
+    emit(`Encrypted successfully: '${encrypted}'`);
+}
+
+/**
+ * @query decrypt a message with the given key
+ * @param keyId: string
+ * @param cypher: string
+ */
+export function decrypt(input: SignInput): void {
+    let wallet = new Wallet();
+    if (!wallet.load()) {
+        return;
+    }
+    let decrypted = wallet.decrypt(input.keyId, input.payload);
+    if (decrypted == null) {
+        emit("Failed to decrypt");
+        return;
+    }
+    emit(`Decrypted successfully: '${decrypted}'`);
+}

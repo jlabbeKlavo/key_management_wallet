@@ -75,13 +75,11 @@ export class Key {
         let KeyAES = Crypto.AES.getKey(this.id);
         if (!KeyAES) {
             return "ERROR: Key not found";
-        }
-        let u8 = KeyAES.encrypt(message);
-        let bytes = convertToUint8Array(u8);        
-        return b64encode(bytes);
+        }        
+        return b64encode(convertToUint8Array(KeyAES.encrypt(message)));
     }
 
-    decrypt(cypher: u8[]): string {
+    decrypt(cypher: string): string {
         if (this.type != "AES") {
             return "ERROR: Key type is not AES";
         }        
@@ -89,6 +87,6 @@ export class Key {
         if (!KeyAES) {
             return "ERROR: Key not found";
         }        
-        return KeyAES.decrypt(cypher);
+        return KeyAES.decrypt(convertToU8Array(b64decode(cypher)));
     }
 }
