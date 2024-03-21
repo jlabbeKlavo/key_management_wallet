@@ -41,7 +41,7 @@ export class Key {
     }
 
     create(description: string, type: string): boolean {
-        this.id = "keyid_" + b64encode(convertToUint8Array(Crypto.getRandomValues(64)));
+        this.id = b64encode(convertToUint8Array(Crypto.getRandomValues(64)));
         this.description = description;
         this.type = type;
         this.owner = Context.get('sender');
