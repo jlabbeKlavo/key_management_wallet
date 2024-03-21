@@ -67,7 +67,7 @@ export class Wallet {
      */
     create(name: string): void {
         this.name = name;
-        this.addUser(Context.get('sender'), "admin");
+        this.addUser(Context.get('sender'), "admin", true);
         emit("Wallet created successfully: " + this.name);
         return;
     }
@@ -77,8 +77,8 @@ export class Wallet {
      * @param userId The id of the user to add.
      * @param role The role of the user to add.
      */
-    addUser(userId: string, role: string): boolean {
-        if (!this.senderIsAdmin())
+    addUser(userId: string, role: string, force: boolean): boolean {
+        if (!force && !this.senderIsAdmin())
         {
             emit("You are not allowed to add a user");
             return false;

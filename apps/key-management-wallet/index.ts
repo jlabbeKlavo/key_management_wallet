@@ -95,7 +95,7 @@ export function addUser(input: AddUserInput): void {
     if (!wallet.load()) {
         return;
     }
-    if (wallet.addUser(input.userId, input.role)) {
+    if (wallet.addUser(input.userId, input.role, false)) {
         wallet.save();
     }
 }
