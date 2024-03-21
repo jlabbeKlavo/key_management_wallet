@@ -33,6 +33,7 @@ export class Wallet {
         let wlt = JSON.parse<Wallet>(walletTable);
         this.name = wlt.name;
         this.keys = wlt.keys;
+        this.users = wlt.users;
         emit("Wallet loaded successfully: " + walletTable);
         return true;
     }
@@ -68,8 +69,7 @@ export class Wallet {
     create(name: string): void {
         this.name = name;
         this.addUser(Context.get('sender'), "admin", true);
-        emit("Wallet created successfully: " + this.name);
-        this.save();
+        emit("Wallet created successfully: " + this.name);        
         return;
     }
     
