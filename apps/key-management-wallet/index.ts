@@ -141,3 +141,14 @@ export function removeKey(keyId: string): void {
         wallet.save();
     }
 }
+
+/**
+ * @query list all keys in the wallet
+ */
+export function listKeys(): void {
+    let wallet = new Wallet();
+    if (!wallet.load()) {
+        return;
+    }
+    wallet.listKeys();
+}
