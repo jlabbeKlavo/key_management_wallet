@@ -58,7 +58,7 @@ export class Wallet {
     create(name: string): void {
         this.name = name;
         this.addUser(Context.get('sender'), "admin");
-        emit("Wallet created successfully: " + this);
+        emit("Wallet created successfully: " + this.name);
         return;
     }
     
