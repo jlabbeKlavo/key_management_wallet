@@ -10,8 +10,7 @@ import { emit } from "./klave/types";
  */
 export function renameWallet(input: RenameWalletInput): void {
     let wallet = new Wallet();
-    if (wallet.load()) {
-        emit("Wallet does not exists. Create it first");
+    if (!wallet.load()) {
         return;
     }
     wallet.rename(input.newName);
@@ -29,7 +28,7 @@ export function renameWallet(input: RenameWalletInput): void {
 export function createWallet(input: CreateWalletInput): void {
     let wallet = new Wallet();
     if (wallet.load()) {
-        emit("Wallet does not exists. Create it first");
+        emit("Wallet does already exists.");
         return;
     }
     wallet.create(input.name);
@@ -41,8 +40,7 @@ export function createWallet(input: CreateWalletInput): void {
  */
 export function reset(): void {
     let wallet = new Wallet();
-    if (wallet.load()) {
-        emit("Wallet does not exists. Create it first");
+    if (!wallet.load()) {
         return;
     }
     wallet.reset();
@@ -57,8 +55,7 @@ export function reset(): void {
  */
 export function sign(input: SignInput) : void {
     let wallet = new Wallet();
-    if (wallet.load()) {
-        emit("Wallet does not exists. Create it first");
+    if (!wallet.load()) {
         return;
     }
     let signature = wallet.sign(input.keyId, input.payload);
@@ -78,8 +75,7 @@ export function sign(input: SignInput) : void {
  */
 export function verify(input: VerifyInput) : void {
     let wallet = new Wallet();
-    if (wallet.load()) {
-        emit("Wallet does not exists. Create it first");
+    if (!wallet.load()) {
         return;
     }
     let result = wallet.verify(input.keyId, input.payload, input.signature);
@@ -96,8 +92,7 @@ export function verify(input: VerifyInput) : void {
  */
 export function addUser(input: AddUserInput): void {
     let wallet = new Wallet();
-    if (wallet.load()) {
-        emit("Wallet does not exists. Create it first");
+    if (!wallet.load()) {
         return;
     }
     if (wallet.addUser(input.userId, input.role)) {
@@ -111,8 +106,7 @@ export function addUser(input: AddUserInput): void {
  */
 export function removeUser(userId: string): void {
     let wallet = new Wallet();
-    if (wallet.load()) {
-        emit("Wallet does not exists. Create it first");
+    if (!wallet.load()) {
         return;
     }
     if (wallet.removeUser(userId)) {
@@ -126,8 +120,7 @@ export function removeUser(userId: string): void {
  */
 export function addKey(input: AddKeyInput): void {
     let wallet = new Wallet();
-    if (wallet.load()) {
-        emit("Wallet does not exists. Create it first");
+    if (!wallet.load()) {
         return;
     }
     if (wallet.addKey(input.description, input.type)) {
@@ -141,8 +134,7 @@ export function addKey(input: AddKeyInput): void {
  */
 export function removeKey(keyId: string): void {
     let wallet = new Wallet();
-    if (wallet.load()) {
-        emit("Wallet does not exists. Create it first");
+    if (!wallet.load()) {
         return;
     }
     if (wallet.removeKey(keyId)) {
