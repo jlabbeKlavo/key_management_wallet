@@ -2,6 +2,7 @@ import { JSON } from "@klave/sdk";
 
 @JSON
 export class RenameWalletInput {
+    oldName: string;
     newName: string;
 }
 
@@ -16,36 +17,6 @@ export class SignInput {
     payload: string;
 }
 
-@JSON 
-export class SignOutput {
-    success: boolean;
-    signature: string;
-    constructor(success: boolean, signature: string) {
-        this.success = success;
-        this.signature = signature;
-    }
-}
-
-@JSON 
-export class EncryptOutput {
-    success: boolean;
-    cypher: string;
-    constructor(success: boolean, cypher: string) {
-        this.success = success;
-        this.cypher = cypher;
-    }
-}
-
-@JSON 
-export class DecryptOutput {
-    success: boolean;
-    message: string;
-    constructor(success: boolean, message: string) {
-        this.success = success;
-        this.message = message;
-    }
-}
-
 @JSON
 export class VerifyInput {
     keyId: string;
@@ -53,20 +24,15 @@ export class VerifyInput {
     signature: string;    
 }
 
-@JSON
-export class VerifyOutput {
-    success: boolean;
-    verified: boolean;    
-    constructor(success: boolean, verified: boolean) {
-        this.success = success;
-        this.verified = verified;
-    }
-}
-
 @JSON 
 export class AddUserInput {
     userId: string;
     role: string;
+}
+
+@JSON 
+export class RemoveUserInput {
+    userId: string;    
 }
 
 @JSON 

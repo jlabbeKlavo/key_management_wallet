@@ -48,10 +48,14 @@ export class Wallet {
      * rename the wallet.
      * @param newName 
      */
-    rename(newName: string): void {        
+    rename(oldName: string, newName: string): void {        
         if (!this.senderIsAdmin())
         {
             revert("You are not allowed to add a user");
+            return;
+        }
+        if (this.name != oldName) {
+            revert("Wallet name does not match");
             return;
         }
         this.name = newName;

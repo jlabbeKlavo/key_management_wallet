@@ -1,28 +1,28 @@
-import { RenameWalletInput, CreateWalletInput, SignInput, VerifyInput, AddUserInput, AddKeyInput, ListKeysInput, ResetInput, RemoveKeyInput, EncryptOutput, DecryptOutput, SignOutput, VerifyOutput} from "./wallet/inputs/types";
+import { RenameWalletInput, CreateWalletInput, SignInput, VerifyInput, AddUserInput, AddKeyInput, ListKeysInput, ResetInput, RemoveKeyInput, RemoveUserInput} from "./wallet/inputs/types";
 import { Wallet } from "./wallet/wallet";
 import { emit, revert } from "./klave/types";
 
 /**
- * @transaction rename an Wallet in the wallet
- * @param oldName: string
- * @param newName: string
+ * @transaction rename the wallet
+ * @param input containing the following fields:
+ * - oldName: string
+ * - newName: string
+ * @returns success boolean
  */
 export function renameWallet(input: RenameWalletInput): void {
     let wallet = Wallet.load();
     if (!wallet) {
         return;
     }
-    wallet.rename(input.newName);
+    wallet.rename(input.oldName, input.newName);
     wallet.save();
 }
 
 /**
- * @transaction create an Wallet in the wallet
+ * @transaction initialize the wallet
  * @param input containing the following fields:
  * - name: string
- * - hiddenOnUI: boolean
- * - customerRefId: string
- * - autoFuel: boolean
+ * @returns success boolean
  */
 export function createWallet(input: CreateWalletInput): void {
     let existingWallet = Wallet.load();
@@ -37,6 +37,9 @@ export function createWallet(input: CreateWalletInput): void {
 
 /**
  * @transaction clears the wallet
+ * @param input containing the following fields:
+ * - keys: string[], the keys to remove (optional)
+ * @returns success boolean
  */
 export function reset(input: ResetInput): void {
     let wallet = Wallet.load();
@@ -52,6 +55,7 @@ export function reset(input: ResetInput): void {
  * @param input containing the following fields:
  * - keyId: string
  * - payload: string
+ * @returns success boolean and the created text
  */
 export function sign(input: SignInput) : void {
     let wallet = Wallet.load();
@@ -72,6 +76,7 @@ export function sign(input: SignInput) : void {
  * - keyId: string
  * - payload: string
  * - signature: string
+ * @returns success boolean
  */
 export function verify(input: VerifyInput) : void {
     let wallet = Wallet.load();
@@ -88,7 +93,10 @@ export function verify(input: VerifyInput) : void {
 
 /**
  * @transaction add a user to the wallet
- * @param userId: string
+ * @param input containing the following fields:
+ * - userId: string
+ * - role: string, "admin" or "user"
+ * @returns success boolean
  */
 export function addUser(input: AddUserInput): void {
     let wallet = Wallet.load();
@@ -102,21 +110,26 @@ export function addUser(input: AddUserInput): void {
 
 /**
  * @transaction remove a user from the wallet
- * @param userId: string
+ * @param input containing the following fields:
+ * - userId: string
+ * @returns success boolean
  */
-export function removeUser(userId: string): void {
+export function removeUser(input: RemoveUserInput): void {
     let wallet = Wallet.load();
     if (!wallet) {
         return;
     }
-    if (wallet.removeUser(userId)) {
+    if (wallet.removeUser(input.userId)) {
         wallet.save();
     }
 }
 
 /**
  * @transaction add a key to the wallet
- * @param keyId: string
+ * @param input containing the following fields:
+ * - description: string
+ * - type: string
+ * @returns success boolean
  */
 export function addKey(input: AddKeyInput): void {
     let wallet = Wallet.load();
@@ -130,7 +143,9 @@ export function addKey(input: AddKeyInput): void {
 
 /**
  * @transaction remove a key from the wallet
- * @param keyId: string
+ * @param input containing the following fields:
+ * - keyId: string
+ * @returns success boolean
  */
 export function removeKey(input: RemoveKeyInput): void {
     let wallet = Wallet.load();
@@ -144,6 +159,9 @@ export function removeKey(input: RemoveKeyInput): void {
 
 /**
  * @query list all keys in the wallet
+ * @param input containing the following fields:
+ * - user: string, the user to list the keys for (optional)
+ * @returns the list of keys
  */
 export function listKeys(input: ListKeysInput): void {
     let wallet = Wallet.load();
@@ -155,8 +173,10 @@ export function listKeys(input: ListKeysInput): void {
 
 /**
  * @query 
- * @param keyId: string
- * @param message: string
+ * @param input containing the following fields:
+ * - keyId: string
+ * - payload: string 
+ * @returns success boolean and the crypted message
  */
 export function encrypt(input: SignInput): void {
     let wallet = Wallet.load();
@@ -173,8 +193,10 @@ export function encrypt(input: SignInput): void {
 
 /**
  * @query 
- * @param keyId: string
- * @param cypher: string
+ * @param input containing the following fields:
+ * - keyId: string
+ * - payload: string
+ * @returns success boolean and text decyphered
  */
 export function decrypt(input: SignInput): void {
     let wallet = Wallet.load();
