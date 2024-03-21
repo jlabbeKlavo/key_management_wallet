@@ -43,10 +43,10 @@ export class Key {
         this.type = type;
         const key = Crypto.ECDSA.generateKey(this.id);
         if (key) {
-            console.log(`SUCCESS: Key '${this.id}' has been generated`);
+            emit(`SUCCESS: Key '${this.id}' has been generated`);
             return true;
         } else {
-            console.log(`ERROR: Key '${this.id}' has not been generated`);
+            emit(`ERROR: Key '${this.id}' has not been generated`);
             return false;
         }
     }
