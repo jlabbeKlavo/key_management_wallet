@@ -1,5 +1,5 @@
 import { Ledger, Crypto, JSON, Context } from '@klave/sdk'
-import { emit } from "../klave/types"
+import { emit, revert } from "../klave/types"
 import { SignInput, VerifyInput, sign, verify } from "../klave/crypto";
 import { encode as b64encode, decode as b64decode } from 'as-base64/assembly';
 import { convertToUint8Array, convertToU8Array } from "../klave/helpers";
@@ -45,12 +45,28 @@ export class Key {
         this.description = description;
         this.type = type;
         this.owner = Context.get('sender');
-        const key = Crypto.ECDSA.generateKey(this.id);
-        if (key) {
-            emit(`SUCCESS: Key '${this.id}' has been generated`);
-            return true;
-        } else {
-            emit(`ERROR: Key '${this.id}' has not been generated`);
+        if (this.type == "ECDSA") {
+            const key = Crypto.ECDSA.generateKey(this.id);
+            if (key) {
+                emit(`SUCCESS: Key '${this.id}' has been generated`);
+                return true;
+            } else {
+                emit(`ERROR: Key '${this.id}' has not been generated`);
+                return false;
+            }
+        }
+        else if (this.type == "AES") {
+            const key = Crypto.AES.generateKey(this.id);
+            if (key) {
+                emit(`SUCCESS: Key '${this.id}' has been generated`);
+                return true;
+            } else {
+                emit(`ERROR: Key '${this.id}' has not been generated`);
+                return false;
+            }
+        }
+        else {
+            emit(`ERROR: Key type '${this.type}' is not supported`);
             return false;
         }
     }
@@ -60,11 +76,19 @@ export class Key {
         emit(`Key deleted successfully: '${this.id}'`);
     }
 
-    sign(message: string): string {                
+    sign(message: string): string | null {
+        if (this.type != "ECDSA") {
+            revert("ERROR: Key type is not ECDSA")
+            return null;
+        }        
         return sign(new SignInput(this.id, message));
     }
 
     verify(message: string, signature: string): boolean {
+        if (this.type != "ECDSA") {
+            revert("ERROR: Key type is not ECDSA")
+            return false;
+        }        
         return verify(new VerifyInput(this.id, message, signature));
     }    
 
