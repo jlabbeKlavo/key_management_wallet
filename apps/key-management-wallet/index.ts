@@ -1,5 +1,5 @@
 import { JSON, Ledger, Context } from "@klave/sdk";
-import { RenameWalletInput, CreateWalletInput, SignInput, VerifyInput, AddUserInput, AddKeyInput} from "./wallet/inputs/types";
+import { RenameWalletInput, CreateWalletInput, SignInput, VerifyInput, AddUserInput, AddKeyInput, ListKeysInput, ResetInput} from "./wallet/inputs/types";
 import { Wallet } from "./wallet/wallet";
 import { emit } from "./klave/types";
 
@@ -38,12 +38,12 @@ export function createWallet(input: CreateWalletInput): void {
 /**
  * @transaction clears the wallet
  */
-export function reset(): void {
+export function reset(input: ResetInput): void {
     let wallet = new Wallet();
     if (!wallet.load()) {
         return;
     }
-    wallet.reset();
+    wallet.reset(input.keys);
     wallet.save();
 }
 
@@ -145,10 +145,10 @@ export function removeKey(keyId: string): void {
 /**
  * @query list all keys in the wallet
  */
-export function listKeys(): void {
+export function listKeys(input: ListKeysInput): void {
     let wallet = new Wallet();
     if (!wallet.load()) {
         return;
     }
-    wallet.listKeys();
+    wallet.listKeys(input.user);
 }

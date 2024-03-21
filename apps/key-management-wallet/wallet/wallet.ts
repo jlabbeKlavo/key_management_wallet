@@ -146,12 +146,12 @@ export class Wallet {
      * list all the keys in the wallet.
      * @returns 
      */
-    listKeys(): void {
+    listKeys(user: string): void {
         if (!this.senderIsRegistered())
         {
             emit("You are not allowed to list the keys in the wallet");
             return;
-        }
+        }        
 
         let keys: string = "";
         for (let i = 0; i < this.keys.length; i++) {
@@ -161,7 +161,9 @@ export class Wallet {
             if (keys.length > 0) {
                 keys += ", ";
             }
-            keys += JSON.stringify<Key>(keyObj);            
+            if (user.length == 0 || keyObj.owner == user) {
+                keys += JSON.stringify<Key>(keyObj);
+            }
         }
         emit(`Keys in the wallet: ${keys}`);
     }
@@ -170,16 +172,28 @@ export class Wallet {
      * reset the wallet to its initial state.
      * @returns 
      */
-    reset(): void {
+    reset(keys: Array<string>): void {
         if (!this.senderIsAdmin())
         {
             emit("You are not allowed to reset the wallet");
             return;
         }
-        this.name = "";        
-        this.keys = new Array<string>();
-        this.users = new Array<string>();
-        emit("Wallet reset successfully");
+
+        if (keys.length == 0) {
+            this.name = "";        
+            this.keys = new Array<string>();
+            this.users = new Array<string>();
+            emit("Wallet reset successfully");
+         } else {
+            for (let i = 0; i < keys.length; i++) {
+                let key = new Key(keys[i]);                
+                key.delete();
+                let index = this.keys.indexOf(keys[i]);
+                this.keys.splice(index, 1);
+            }
+            emit("Keys removed successfully");
+        }
+
     }
 
     /**

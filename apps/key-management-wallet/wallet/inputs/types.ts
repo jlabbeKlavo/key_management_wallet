@@ -34,3 +34,13 @@ export class AddKeyInput {
     description: string;
     type: string;
 }
+
+@JSON
+export class ListKeysInput {
+    user: string;
+}
+
+@JSON
+export class ResetInput {
+    keys: string[];
+}

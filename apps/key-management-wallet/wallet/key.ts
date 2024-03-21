@@ -1,4 +1,4 @@
-import { Ledger, Crypto, JSON } from '@klave/sdk'
+import { Ledger, Crypto, JSON, Context } from '@klave/sdk'
 import { emit } from "../klave/types"
 import { SignInput, VerifyInput, sign, verify } from "../klave/crypto";
 import { encode as b64encode, decode as b64decode } from 'as-base64/assembly';
@@ -11,11 +11,13 @@ export class Key {
     id: string;
     description: string;
     type: string;
+    owner: string;
 
     constructor(id: string) {
         this.id = id;
         this.description = "";
         this.type = "";
+        this.owner = "";
     }
 
     load() : boolean {
@@ -27,6 +29,7 @@ export class Key {
         let key = JSON.parse<Key>(keyTable);        
         this.description = key.description;
         this.type = key.type;        
+        this.owner = key.owner;
         emit("key loaded successfully: " + key.id);
         return true;
     }
@@ -41,6 +44,7 @@ export class Key {
         this.id = "keyid_" + b64encode(convertToUint8Array(Crypto.getRandomValues(64)));
         this.description = description;
         this.type = type;
+        this.owner = Context.get('sender');
         const key = Crypto.ECDSA.generateKey(this.id);
         if (key) {
             emit(`SUCCESS: Key '${this.id}' has been generated`);
