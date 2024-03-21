@@ -153,7 +153,7 @@ export function listKeys(input: ListKeysInput): void {
 }
 
 /**
- * @query encrypt a message with the given key
+ * @query 
  * @param keyId: string
  * @param message: string
  */
@@ -171,7 +171,7 @@ export function encrypt(input: SignInput): void {
 }
 
 /**
- * @query decrypt a message with the given key
+ * @query 
  * @param keyId: string
  * @param cypher: string
  */
