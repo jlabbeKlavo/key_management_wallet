@@ -20,8 +20,7 @@ export class Key {
         this.owner = "";
     }
 
-    load() : boolean {
-        emit("Loading key: " + this.id);
+    load() : boolean {        
         let keyTable = Ledger.getTable(KeysTable).get(this.id);
         if (keyTable.length == 0) {
             emit("Key does not exists. Create it first");
@@ -31,14 +30,14 @@ export class Key {
         this.description = key.description;
         this.type = key.type;        
         this.owner = key.owner;
-        emit("key loaded successfully: " + key.id);
+        emit(`Key loaded successfully: '${this.id}'`);        
         return true;
     }
 
     save(): void {
         let keyTable = JSON.stringify<Key>(this);
         Ledger.getTable(KeysTable).set(this.id, keyTable);
-        emit("User saved successfully: " + this.id);
+        emit(`User saved successfully: '${this.id}'`);        
     }
 
     create(description: string, type: string): boolean {
@@ -58,7 +57,7 @@ export class Key {
 
     delete(): void {
         Ledger.getTable(KeysTable).unset(this.id);
-        emit("User deleted successfully: " + this.id);
+        emit(`Key deleted successfully: '${this.id}'`);
     }
 
     sign(message: string): string {                

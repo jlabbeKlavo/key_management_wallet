@@ -128,7 +128,6 @@ export class Wallet {
     senderIsAdmin(): boolean {
         let user = new User(Context.get('sender'));
         if (!user.load()) {
-            emit("User not found: " + Context.get('sender'));
             return false;
         }
         return user.role == "admin";
@@ -213,7 +212,6 @@ export class Wallet {
         }
         let key = new Key(keyId);
         if (!key.load()) {
-            emit("Key not found: " + keyId);
             return null;
         }
         return key.sign(payload);        
@@ -233,7 +231,6 @@ export class Wallet {
         }
         let key = new Key(keyId);
         if (!key.load()) {
-            emit("Key not found: " + keyId);
             return false;
         }
         return key.verify(payload, signature);        
@@ -255,7 +252,6 @@ export class Wallet {
         key.save();
 
         this.keys.push(key.id);
-        emit("Key created successfully: " + key.id);
         return true;
     }
 
@@ -271,14 +267,12 @@ export class Wallet {
         }
         let key = new Key(keyId);
         if (!key.load()) {
-            emit("Key not found: " + keyId);
             return false;
         }
         key.delete();
 
         let index = this.keys.indexOf(keyId);
         this.keys.splice(index, 1);
-        emit("Key removed successfully: " + keyId);
         return true;
     }
 

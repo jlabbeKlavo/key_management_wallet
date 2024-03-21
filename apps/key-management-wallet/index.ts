@@ -27,7 +27,7 @@ export function renameWallet(input: RenameWalletInput): void {
 export function createWallet(input: CreateWalletInput): void {
     let wallet = new Wallet();
     if (wallet.load()) {
-        emit("Wallet does already exists.");
+        emit(`Wallet does already exists.`);        
         return;
     }
     wallet.create(input.name);
@@ -62,7 +62,7 @@ export function sign(input: SignInput) : void {
         emit("Failed to sign");
         return;
     }
-    emit("Signed successfully: " + signature);    
+    emit(`Signed successfully: '${signature}'`);    
 }
 
 /**
@@ -79,10 +79,10 @@ export function verify(input: VerifyInput) : void {
     }
     let result = wallet.verify(input.keyId, input.payload, input.signature);
     if (!result) {
-        emit("Failed to verify");
+        emit(`Failed to verify`);
         return;
     }
-    emit("Verified successfully");
+    emit(`Verified successfully`);
 }
 
 /**
