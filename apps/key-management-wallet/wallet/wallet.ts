@@ -42,7 +42,7 @@ export class Wallet {
      */
     save(): void {
         let walletTable = JSON.stringify<Wallet>(this);
-        Ledger.getTable(walletTable).set("ALL", walletTable);
+        Ledger.getTable(WalletTable).set("ALL", walletTable);
         emit("Wallet saved successfully: " + walletTable);
     }
 
@@ -69,6 +69,7 @@ export class Wallet {
         this.name = name;
         this.addUser(Context.get('sender'), "admin", true);
         emit("Wallet created successfully: " + this.name);
+        this.save();
         return;
     }
     
