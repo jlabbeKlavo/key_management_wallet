@@ -21,6 +21,7 @@ export class Key {
     }
 
     load() : boolean {
+        emit("Loading key: " + this.id);
         let keyTable = Ledger.getTable(KeysTable).get(this.id);
         if (keyTable.length == 0) {
             emit("Key does not exists. Create it first");
