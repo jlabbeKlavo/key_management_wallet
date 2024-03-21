@@ -165,10 +165,10 @@ export class Wallet {
                 keys += JSON.stringify<Key>(keyObj);
             }
         }
-        if (keys.length == 0)
-            emit(`Keys in the wallet: ${keys}`);
-        else 
-            emit("No keys found in the wallet");
+        if (keys.length == 0) {
+            emit(`No keys found in the wallet`);
+        }
+        emit(`Keys in the wallet: ${keys}`);
     }
 
     /**
