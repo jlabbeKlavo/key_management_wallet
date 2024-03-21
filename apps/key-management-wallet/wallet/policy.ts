@@ -1,5 +1,5 @@
 import { JSON, HTTP, Notifier, HttpRequest } from "@klave/sdk"
-import { ErrorMessage } from "../../klave/types";
+import { ErrorMessage } from "../klave/types";
 
 // enum Usage {
 //     RECOVERY = "RECOVERY",

@@ -38,7 +38,7 @@ export class Key {
     }
 
     create(description: string, type: string): boolean {
-        this.id = "key_" + Math.random().toString(36).substr(2, 9);
+        this.id = "keyid_" + b64encode(convertToUint8Array(Crypto.getRandomValues(64)));
         this.description = description;
         this.type = type;
         const key = Crypto.ECDSA.generateKey(this.id);
