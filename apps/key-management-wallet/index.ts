@@ -1,5 +1,4 @@
-import { JSON, Ledger, Context } from "@klave/sdk";
-import { RenameWalletInput, CreateWalletInput, SignInput, VerifyInput, AddUserInput, AddKeyInput, ListKeysInput, ResetInput} from "./wallet/inputs/types";
+import { RenameWalletInput, CreateWalletInput, SignInput, VerifyInput, AddUserInput, AddKeyInput, ListKeysInput, ResetInput, RemoveKeyInput} from "./wallet/inputs/types";
 import { Wallet } from "./wallet/wallet";
 import { emit } from "./klave/types";
 
@@ -132,12 +131,12 @@ export function addKey(input: AddKeyInput): void {
  * @transaction remove a key from the wallet
  * @param keyId: string
  */
-export function removeKey(keyId: string): void {
+export function removeKey(input: RemoveKeyInput): void {
     let wallet = new Wallet();
     if (!wallet.load()) {
         return;
     }
-    if (wallet.removeKey(keyId)) {
+    if (wallet.removeKey(input.keyId)) {
         wallet.save();
     }
 }

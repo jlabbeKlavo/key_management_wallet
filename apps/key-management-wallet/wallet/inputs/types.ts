@@ -35,6 +35,11 @@ export class AddKeyInput {
     type: string;
 }
 
+@JSON 
+export class RemoveKeyInput {
+    keyId: string;    
+}
+
 @JSON
 export class ListKeysInput {
     user: string;
