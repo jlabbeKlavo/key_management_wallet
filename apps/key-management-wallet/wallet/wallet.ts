@@ -1,5 +1,5 @@
 import { Ledger, JSON, Context } from "@klave/sdk";
-import { emit } from "../klave/types";
+import { emit, revert } from "../klave/types";
 import { Key } from "./key";
 import { User } from "./user";
 
@@ -24,18 +24,15 @@ export class Wallet {
      * load the wallet from the ledger.
      * @returns true if the wallet was loaded successfully, false otherwise.
      */
-    load(): boolean {
+    static load(): Wallet | null {
         let walletTable = Ledger.getTable(WalletTable).get("ALL");
         if (walletTable.length == 0) {
-            emit("Wallet does not exists. Create it first");
-            return false;
+            revert("Wallet does not exists. Create it first");
+            return null;
         }
         let wlt = JSON.parse<Wallet>(walletTable);
-        this.name = wlt.name;
-        this.keys = wlt.keys;
-        this.users = wlt.users;
         emit("Wallet loaded successfully: " + walletTable);
-        return true;
+        return wlt;
     }
  
     /**
@@ -54,7 +51,7 @@ export class Wallet {
     rename(newName: string): void {        
         if (!this.senderIsAdmin())
         {
-            emit("You are not allowed to add a user");
+            revert("You are not allowed to add a user");
             return;
         }
         this.name = newName;
@@ -81,15 +78,16 @@ export class Wallet {
     addUser(userId: string, role: string, force: boolean): boolean {
         if (!force && !this.senderIsAdmin())
         {
-            emit("You are not allowed to add a user");
+            revert("You are not allowed to add a user");
             return false;
         }
 
-        let user = new User(userId);
-        if (user.load()) {
-            emit("User already exists: " + userId);
+        let existingUser = User.load(userId);
+        if (existingUser) {
+            revert("User already exists: " + userId);
             return false;
         }
+        let user = new User(userId);
         user.role = role;
         user.save();
         this.users.push(userId);        
@@ -104,13 +102,13 @@ export class Wallet {
     removeUser(userId: string): boolean {
         if (!this.senderIsAdmin())
         {
-            emit("You are not allowed to remove a user");
+            revert("You are not allowed to remove a user");
             return false;
         }
 
-        let user = new User(userId);
-        if (!user.load()) {
-            emit("User not found: " + userId);
+        let user = User.load(userId);
+        if (!user) {
+            revert("User not found: " + userId);
             return false;
         }
         user.delete();
@@ -126,8 +124,8 @@ export class Wallet {
      * @returns True if the sender is an admin, false otherwise.
      */
     senderIsAdmin(): boolean {
-        let user = new User(Context.get('sender'));
-        if (!user.load()) {
+        let user = User.load(Context.get('sender'));
+        if (!user) {
             return false;
         }
         return user.role == "admin";
@@ -138,8 +136,11 @@ export class Wallet {
      * @returns True if the sender is registered, false otherwise.
      */
     senderIsRegistered(): boolean {
-        let user = new User(Context.get('sender'));
-        return user.load();
+        let user = User.load(Context.get('sender'));
+        if (!user) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -149,15 +150,18 @@ export class Wallet {
     listKeys(user: string): void {
         if (!this.senderIsRegistered())
         {
-            emit("You are not allowed to list the keys in the wallet");
+            revert("You are not allowed to list the keys in the wallet");
             return;
         }        
 
         let keys: string = "";
         for (let i = 0; i < this.keys.length; i++) {
             let key = this.keys[i];
-            let keyObj = new Key(key);
-            keyObj.load();
+            let keyObj = Key.load(key);
+            if (!keyObj) {
+                revert(`Key ${key} does not exist`);
+                continue;
+            }            
             if (keys.length > 0) {
                 keys += ", ";
             }
@@ -178,7 +182,7 @@ export class Wallet {
     reset(keys: Array<string>): void {
         if (!this.senderIsAdmin())
         {
-            emit("You are not allowed to reset the wallet");
+            revert("You are not allowed to reset the wallet");
             return;
         }
 
@@ -207,11 +211,11 @@ export class Wallet {
     sign(keyId: string, payload: string): string | null {
         if (!this.senderIsRegistered())
         {
-            emit("You are not allowed to sign a message/access this wallet");
+            revert("You are not allowed to sign a message/access this wallet");
             return null;
         }
-        let key = new Key(keyId);
-        if (!key.load()) {
+        let key = Key.load(keyId);
+        if (!key) {
             return null;
         }
         return key.sign(payload);        
@@ -226,11 +230,11 @@ export class Wallet {
     verify(keyId: string, payload: string, signature: string): boolean {
         if (!this.senderIsRegistered())
         {
-            emit("You are not allowed to verify a signature/access this wallet");
+            revert("You are not allowed to verify a signature/access this wallet");
             return false;
         }
-        let key = new Key(keyId);
-        if (!key.load()) {
+        let key = Key.load(keyId);
+        if (!key) {
             return false;
         }
         return key.verify(payload, signature);        
@@ -244,7 +248,7 @@ export class Wallet {
     addKey(description: string, type: string): boolean {
         if (!this.senderIsRegistered())
         {
-            emit("You are not allowed to add a key/access this wallet");
+            revert("You are not allowed to add a key/access this wallet");
             return false;
         }
         let key = new Key("");
@@ -262,11 +266,11 @@ export class Wallet {
     removeKey(keyId: string): boolean {
         if (!this.senderIsRegistered())
         {
-            emit("You are not allowed to remove a key/access this wallet");
+            revert("You are not allowed to remove a key/access this wallet");
             return false;
         }
-        let key = new Key(keyId);
-        if (!key.load()) {
+        let key = Key.load(keyId);
+        if (!key) {
             return false;
         }
         key.delete();
@@ -282,11 +286,11 @@ export class Wallet {
     encrypt(keyId: string, message: string): string | null {
         if (!this.senderIsRegistered())
         {
-            emit("You are not allowed to encrypt a message/access this wallet");
+            revert("You are not allowed to encrypt a message/access this wallet");
             return null;
         }
-        let key = new Key(keyId);
-        if (!key.load()) {
+        let key = Key.load(keyId);
+        if (!key) {
             return null;
         }
         return key.encrypt(message);        
@@ -298,11 +302,11 @@ export class Wallet {
     decrypt(keyId:string, cypher: string): string | null{
         if (!this.senderIsRegistered())
         {
-            emit("You are not allowed to encrypt a message/access this wallet");
+            revert("You are not allowed to encrypt a message/access this wallet");
             return null;
         }
-        let key = new Key(keyId);
-        if (!key.load()) {
+        let key = Key.load(keyId);
+        if (!key) {
             return null;
         }
         return key.decrypt(cypher);        

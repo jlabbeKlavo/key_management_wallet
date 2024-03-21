@@ -1,6 +1,6 @@
-import { RenameWalletInput, CreateWalletInput, SignInput, VerifyInput, AddUserInput, AddKeyInput, ListKeysInput, ResetInput, RemoveKeyInput} from "./wallet/inputs/types";
+import { RenameWalletInput, CreateWalletInput, SignInput, VerifyInput, AddUserInput, AddKeyInput, ListKeysInput, ResetInput, RemoveKeyInput, EncryptOutput, DecryptOutput, SignOutput, VerifyOutput} from "./wallet/inputs/types";
 import { Wallet } from "./wallet/wallet";
-import { emit } from "./klave/types";
+import { emit, revert } from "./klave/types";
 
 /**
  * @transaction rename an Wallet in the wallet
@@ -8,8 +8,8 @@ import { emit } from "./klave/types";
  * @param newName: string
  */
 export function renameWallet(input: RenameWalletInput): void {
-    let wallet = new Wallet();
-    if (!wallet.load()) {
+    let wallet = Wallet.load();
+    if (!wallet) {
         return;
     }
     wallet.rename(input.newName);
@@ -25,11 +25,12 @@ export function renameWallet(input: RenameWalletInput): void {
  * - autoFuel: boolean
  */
 export function createWallet(input: CreateWalletInput): void {
-    let wallet = new Wallet();
-    if (wallet.load()) {
-        emit(`Wallet does already exists.`);        
+    let existingWallet = Wallet.load();
+    if (existingWallet) {
+        revert(`Wallet does already exists.`);        
         return;
     }
+    let wallet = new Wallet();
     wallet.create(input.name);
     wallet.save();
 }
@@ -38,8 +39,8 @@ export function createWallet(input: CreateWalletInput): void {
  * @transaction clears the wallet
  */
 export function reset(input: ResetInput): void {
-    let wallet = new Wallet();
-    if (!wallet.load()) {
+    let wallet = Wallet.load();
+    if (!wallet) {
         return;
     }
     wallet.reset(input.keys);
@@ -53,16 +54,16 @@ export function reset(input: ResetInput): void {
  * - payload: string
  */
 export function sign(input: SignInput) : void {
-    let wallet = new Wallet();
-    if (!wallet.load()) {
+    let wallet = Wallet.load();
+    if (!wallet) {
         return;
     }
     let signature = wallet.sign(input.keyId, input.payload);
     if (signature == null) {
-        emit("Failed to sign");
+        revert("Failed to sign");
         return;
     }
-    emit(`Signed successfully: '${signature}'`);    
+    emit(signature);
 }
 
 /**
@@ -73,16 +74,16 @@ export function sign(input: SignInput) : void {
  * - signature: string
  */
 export function verify(input: VerifyInput) : void {
-    let wallet = new Wallet();
-    if (!wallet.load()) {
+    let wallet = Wallet.load();
+    if (!wallet) {
         return;
     }
     let result = wallet.verify(input.keyId, input.payload, input.signature);
     if (!result) {
-        emit(`Failed to verify`);
+        revert(`Failed to verify`);
         return;
     }
-    emit(`Verified successfully`);
+    emit("verified");
 }
 
 /**
@@ -90,8 +91,8 @@ export function verify(input: VerifyInput) : void {
  * @param userId: string
  */
 export function addUser(input: AddUserInput): void {
-    let wallet = new Wallet();
-    if (!wallet.load()) {
+    let wallet = Wallet.load();
+    if (!wallet) {
         return;
     }
     if (wallet.addUser(input.userId, input.role, false)) {
@@ -104,8 +105,8 @@ export function addUser(input: AddUserInput): void {
  * @param userId: string
  */
 export function removeUser(userId: string): void {
-    let wallet = new Wallet();
-    if (!wallet.load()) {
+    let wallet = Wallet.load();
+    if (!wallet) {
         return;
     }
     if (wallet.removeUser(userId)) {
@@ -118,8 +119,8 @@ export function removeUser(userId: string): void {
  * @param keyId: string
  */
 export function addKey(input: AddKeyInput): void {
-    let wallet = new Wallet();
-    if (!wallet.load()) {
+    let wallet = Wallet.load();
+    if (!wallet) {
         return;
     }
     if (wallet.addKey(input.description, input.type)) {
@@ -132,8 +133,8 @@ export function addKey(input: AddKeyInput): void {
  * @param keyId: string
  */
 export function removeKey(input: RemoveKeyInput): void {
-    let wallet = new Wallet();
-    if (!wallet.load()) {
+    let wallet = Wallet.load();
+    if (!wallet) {
         return;
     }
     if (wallet.removeKey(input.keyId)) {
@@ -145,8 +146,8 @@ export function removeKey(input: RemoveKeyInput): void {
  * @query list all keys in the wallet
  */
 export function listKeys(input: ListKeysInput): void {
-    let wallet = new Wallet();
-    if (!wallet.load()) {
+    let wallet = Wallet.load();
+    if (!wallet) {
         return;
     }
     wallet.listKeys(input.user);
@@ -158,16 +159,16 @@ export function listKeys(input: ListKeysInput): void {
  * @param message: string
  */
 export function encrypt(input: SignInput): void {
-    let wallet = new Wallet();
-    if (!wallet.load()) {
+    let wallet = Wallet.load();
+    if (!wallet) {
         return;
     }
     let encrypted = wallet.encrypt(input.keyId, input.payload);
     if (encrypted == null) {
-        emit("Failed to encrypt");
+        revert("Failed to encrypt");
         return;
     }
-    emit(`Encrypted successfully: '${encrypted}'`);
+    emit(encrypted);    
 }
 
 /**
@@ -176,14 +177,14 @@ export function encrypt(input: SignInput): void {
  * @param cypher: string
  */
 export function decrypt(input: SignInput): void {
-    let wallet = new Wallet();
-    if (!wallet.load()) {
+    let wallet = Wallet.load();
+    if (!wallet) {
         return;
     }
     let decrypted = wallet.decrypt(input.keyId, input.payload);
     if (decrypted == null) {
-        emit("Failed to decrypt");
+        revert("Failed to decrypt");
         return;
     }
-    emit(`Decrypted successfully: '${decrypted}'`);
+    emit(decrypted);
 }

@@ -20,18 +20,15 @@ export class Key {
         this.owner = "";
     }
 
-    load() : boolean {        
-        let keyTable = Ledger.getTable(KeysTable).get(this.id);
+    static load(keyId: string) : Key | null {        
+        let keyTable = Ledger.getTable(KeysTable).get(keyId);
         if (keyTable.length == 0) {
-            emit("Key does not exists. Create it first");
-            return false;
+            revert("Key does not exists. Create it first");
+            return null;
         }
         let key = JSON.parse<Key>(keyTable);        
-        this.description = key.description;
-        this.type = key.type;        
-        this.owner = key.owner;
-        emit(`Key loaded successfully: '${this.id}'`);        
-        return true;
+        emit(`Key loaded successfully: '${key.id}'`);        
+        return key;
     }
 
     save(): void {
@@ -51,7 +48,7 @@ export class Key {
                 emit(`SUCCESS: Key '${this.id}' has been generated`);
                 return true;
             } else {
-                emit(`ERROR: Key '${this.id}' has not been generated`);
+                revert(`ERROR: Key '${this.id}' has not been generated`);
                 return false;
             }
         }
@@ -61,12 +58,12 @@ export class Key {
                 emit(`SUCCESS: Key '${this.id}' has been generated`);
                 return true;
             } else {
-                emit(`ERROR: Key '${this.id}' has not been generated`);
+                revert(`ERROR: Key '${this.id}' has not been generated`);
                 return false;
             }
         }
         else {
-            emit(`ERROR: Key type '${this.type}' is not supported`);
+            revert(`ERROR: Key type '${this.type}' is not supported`);
             return false;
         }
     }
@@ -94,22 +91,26 @@ export class Key {
 
     encrypt(message: string): string {
         if (this.type != "AES") {
-            return "ERROR: Key type is not AES";
+            revert("ERROR: Key type is not AES");
+            return "";
         }        
         let KeyAES = Crypto.AES.getKey(this.id);
         if (!KeyAES) {
-            return "ERROR: Key not found";
+            revert("ERROR: Key not found");
+            return "";
         }        
         return b64encode(convertToUint8Array(KeyAES.encrypt(message)));
     }
 
     decrypt(cypher: string): string {
         if (this.type != "AES") {
-            return "ERROR: Key type is not AES";
+            revert("ERROR: Key type is not AES");
+            return "";
         }        
         let KeyAES = Crypto.AES.getKey(this.id);
         if (!KeyAES) {
-            return "ERROR: Key not found";
+            revert("ERROR: Key not found");
+            return "";
         }        
         return KeyAES.decrypt(convertToU8Array(b64decode(cypher)));
     }

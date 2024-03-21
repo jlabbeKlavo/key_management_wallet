@@ -1,5 +1,5 @@
 import { Ledger, JSON } from "@klave/sdk";
-import { emit } from "../klave/types"
+import { emit, revert } from "../klave/types"
 
 const UsersTable = "UsersTable";
 
@@ -13,16 +13,15 @@ export class User {
         this.role = "";
     }
 
-    load() : boolean {
-        let userTable = Ledger.getTable(UsersTable).get(this.id);
+    static load(userId: string) : User | null {
+        let userTable = Ledger.getTable(UsersTable).get(userId);
         if (userTable.length == 0) {
-            emit(`User ${this.id} does not exists. Create it first`);
-            return false;
+            revert(`User ${userId} does not exists. Create it first`);
+            return null;
         }
-        let user = JSON.parse<User>(userTable);
-        this.role = user.role;
-        emit(`User loaded successfully: '${this.id}'`);
-        return true;
+        let user = JSON.parse<User>(userTable);        
+        emit(`User loaded successfully: '${user.id}'`);
+        return user;
     }
 
     save(): void {
