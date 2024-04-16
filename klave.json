@@ -5,10 +5,10 @@
     ],
     "applications": [
         {
-            "name": "Key-Management-Wallet",
-            "slug": "kmWallet",
+            "name": "SCP-Wallet",
+            "slug": "scpWallet",
             "version": "0.0.1",
-            "rootDir": "/apps/key-management-wallet"
+            "rootDir": "/apps/scp-wallet"
         }
     ]
 }
