@@ -1,2 +1,2 @@
-# key_management_wallet
-Secure Key Management Wallet
+# scp_wallet
+Wallet where identities are handled through the SCP.
