@@ -37,19 +37,19 @@ export function sign(input: SignInput): string {
         if (signatureU8) {
             let signatureBytes = convertToUint8Array(signatureU8);
             signature = b64encode(signatureBytes);
-            emit(`Signature: ${signature}`);            
-        }        
+            emit(`Signature: ${signature}`);
+        }
     }
     return signature;
 }
 
 export function verify(input: VerifyInput): boolean {
     const key = Crypto.ECDSA.getKey(input.keyName);
-    if (key) {        
+    if (key) {
         emit(`Verifying message: ${input.message} - with signature: ${input.signature}`);
         let signatureAsBytes = b64decode(input.signature);
         return key.verify(input.message, convertToU8Array(signatureAsBytes));
-    } 
+    }
     return false;
 }
 

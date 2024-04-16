@@ -11,7 +11,7 @@ export class CreateWalletInput {
     name: string;
 }
 
-@JSON 
+@JSON
 export class SignInput {
     keyId: string;
     payload: string;
@@ -21,29 +21,29 @@ export class SignInput {
 export class VerifyInput {
     keyId: string;
     payload: string;
-    signature: string;    
+    signature: string;
 }
 
-@JSON 
+@JSON
 export class AddUserInput {
     userId: string;
     role: string;
 }
 
-@JSON 
+@JSON
 export class RemoveUserInput {
-    userId: string;    
+    userId: string;
 }
 
-@JSON 
+@JSON
 export class AddKeyInput {
     description: string;
     type: string;
 }
 
-@JSON 
+@JSON
 export class RemoveKeyInput {
-    keyId: string;    
+    keyId: string;
 }
 
 @JSON

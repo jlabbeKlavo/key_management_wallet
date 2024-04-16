@@ -70,7 +70,7 @@ export function sign(input: SignInput) : void {
 }
 
 /**
- * @query 
+ * @query
  * @param input containing the following fields:
  * - keyId: string
  * - payload: string
@@ -91,10 +91,10 @@ export function verify(input: VerifyInput) : void {
 }
 
 /**
- * @query 
+ * @query
  * @param input containing the following fields:
  * - keyId: string
- * - payload: string 
+ * - payload: string
  * @returns success boolean and the crypted message
  */
 export function encrypt(input: SignInput): void {
@@ -107,11 +107,11 @@ export function encrypt(input: SignInput): void {
         revert("Failed to encrypt");
         return;
     }
-    emit(encrypted);    
+    emit(encrypted);
 }
 
 /**
- * @query 
+ * @query
  * @param input containing the following fields:
  * - keyId: string
  * - payload: string
@@ -172,7 +172,7 @@ export function removeUser(input: RemoveUserInput): void {
 export function createWallet(input: CreateWalletInput): void {
     let existingWallet = Wallet.load();
     if (existingWallet) {
-        revert(`Wallet does already exists.`);        
+        revert(`Wallet does already exists.`);
         return;
     }
     let wallet = new Wallet();

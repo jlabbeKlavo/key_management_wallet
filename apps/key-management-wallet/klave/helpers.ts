@@ -1,9 +1,9 @@
 export function convertToU8Array(input: Uint8Array): u8[] {
-    let ret: u8[] = []; 
+    let ret: u8[] = [];
     for (let i = 0; i < input.length; ++i)
         ret[i] = input[i];
 
-    return ret; 
+    return ret;
 }
 
 export function convertToUint8Array(input: u8[]): Uint8Array {
@@ -12,5 +12,5 @@ export function convertToUint8Array(input: u8[]): Uint8Array {
         value[i] = input[i];
     }
 
-    return value;    
+    return value;
 }

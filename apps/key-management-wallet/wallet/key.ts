@@ -20,21 +20,21 @@ export class Key {
         this.owner = "";
     }
 
-    static load(keyId: string) : Key | null {        
+    static load(keyId: string) : Key | null {
         let keyTable = Ledger.getTable(KeysTable).get(keyId);
         if (keyTable.length == 0) {
             revert("Key does not exists. Create it first");
             return null;
         }
-        let key = JSON.parse<Key>(keyTable);        
-        emit(`Key loaded successfully: '${key.id}'`);        
+        let key = JSON.parse<Key>(keyTable);
+        emit(`Key loaded successfully: '${key.id}'`);
         return key;
     }
 
     save(): void {
         let keyTable = JSON.stringify<Key>(this);
         Ledger.getTable(KeysTable).set(this.id, keyTable);
-        emit(`User saved successfully: '${this.id}'`);        
+        emit(`User saved successfully: '${this.id}'`);
     }
 
     create(description: string, type: string): boolean {
@@ -77,7 +77,7 @@ export class Key {
         if (this.type != "ECDSA") {
             revert("ERROR: Key type is not ECDSA")
             return null;
-        }        
+        }
         return sign(new SignInput(this.id, message));
     }
 
@@ -85,20 +85,20 @@ export class Key {
         if (this.type != "ECDSA") {
             revert("ERROR: Key type is not ECDSA")
             return false;
-        }        
+        }
         return verify(new VerifyInput(this.id, message, signature));
-    }    
+    }
 
     encrypt(message: string): string {
         if (this.type != "AES") {
             revert("ERROR: Key type is not AES");
             return "";
-        }        
+        }
         let KeyAES = Crypto.AES.getKey(this.id);
         if (!KeyAES) {
             revert("ERROR: Key not found");
             return "";
-        }        
+        }
         return b64encode(convertToUint8Array(KeyAES.encrypt(message)));
     }
 
@@ -106,12 +106,12 @@ export class Key {
         if (this.type != "AES") {
             revert("ERROR: Key type is not AES");
             return "";
-        }        
+        }
         let KeyAES = Crypto.AES.getKey(this.id);
         if (!KeyAES) {
             revert("ERROR: Key not found");
             return "";
-        }        
+        }
         return KeyAES.decrypt(convertToU8Array(b64decode(cypher)));
     }
 }

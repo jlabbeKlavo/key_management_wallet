@@ -22,11 +22,11 @@ export class Policy {
         const query: HttpRequest = {
             hostname: 'random-word-api.herokuapp.com',
             port: 443,
-            path: '/word?number=${nb}',
+            path: `/word?number=${nb}`,
             headers: [],
             body: ''
         };
-    
+
         const response = HTTP.requestAsString(query);
         if (!response) {
             Notifier.sendJson<ErrorMessage>({
@@ -35,7 +35,7 @@ export class Policy {
             });
             return "HTTP call went wrong !";
         }
-    
+
         return response;
     }
 }

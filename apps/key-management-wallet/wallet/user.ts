@@ -19,7 +19,7 @@ export class User {
             revert(`User ${userId} does not exists. Create it first`);
             return null;
         }
-        let user = JSON.parse<User>(userTable);        
+        let user = JSON.parse<User>(userTable);
         emit(`User loaded successfully: '${user.id}'`);
         return user;
     }

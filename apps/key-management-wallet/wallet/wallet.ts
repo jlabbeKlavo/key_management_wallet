@@ -9,7 +9,7 @@ const WalletTable = "WalletTable";
  * An Wallet is associated with a list of users and holds keys.
  */
 @JSON
-export class Wallet {    
+export class Wallet {
     name: string;
     keys: Array<string>;
     users: Array<string>;
@@ -19,7 +19,7 @@ export class Wallet {
         this.keys = new Array<string>();
         this.users = new Array<string>();
     }
-    
+
     /**
      * load the wallet from the ledger.
      * @returns true if the wallet was loaded successfully, false otherwise.
@@ -34,7 +34,7 @@ export class Wallet {
         emit("Wallet loaded successfully: " + walletTable);
         return wlt;
     }
- 
+
     /**
      * save the wallet to the ledger.
      */
@@ -46,9 +46,9 @@ export class Wallet {
 
     /**
      * rename the wallet.
-     * @param newName 
+     * @param newName
      */
-    rename(oldName: string, newName: string): void {        
+    rename(oldName: string, newName: string): void {
         if (!this.senderIsAdmin())
         {
             revert("You are not allowed to rename the wallet");
@@ -65,15 +65,15 @@ export class Wallet {
     /**
      * Create a wallet with the given name.
      * Also adds the sender as an admin user.
-     * @param name 
+     * @param name
      */
     create(name: string): void {
         this.name = name;
         this.addUser(Context.get('sender'), "admin", true);
-        emit("Wallet created successfully: " + this.name);        
+        emit("Wallet created successfully: " + this.name);
         return;
     }
-    
+
     /**
      * Add a user to the wallet.
      * @param userId The id of the user to add.
@@ -94,7 +94,7 @@ export class Wallet {
         let user = new User(userId);
         user.role = role;
         user.save();
-        this.users.push(userId);        
+        this.users.push(userId);
         emit("User added successfully: " + userId);
         return true;
     }
@@ -149,14 +149,14 @@ export class Wallet {
 
     /**
      * list all the keys in the wallet.
-     * @returns 
+     * @returns
      */
     listKeys(user: string): void {
         if (!this.senderIsRegistered())
         {
             revert("You are not allowed to list the keys in the wallet");
             return;
-        }        
+        }
 
         let keys: string = "";
         for (let i = 0; i < this.keys.length; i++) {
@@ -165,7 +165,7 @@ export class Wallet {
             if (!keyObj) {
                 revert(`Key ${key} does not exist`);
                 continue;
-            }            
+            }
             if (keys.length > 0) {
                 keys += ", ";
             }
@@ -181,7 +181,7 @@ export class Wallet {
 
     /**
      * reset the wallet to its initial state.
-     * @returns 
+     * @returns
      */
     reset(keys: Array<string>): void {
         if (!this.senderIsAdmin())
@@ -191,13 +191,13 @@ export class Wallet {
         }
 
         if (keys.length == 0) {
-            this.name = "";        
+            this.name = "";
             this.keys = new Array<string>();
             this.users = new Array<string>();
             emit("Wallet reset successfully");
          } else {
             for (let i = 0; i < keys.length; i++) {
-                let key = new Key(keys[i]);                
+                let key = new Key(keys[i]);
                 key.delete();
                 let index = this.keys.indexOf(keys[i]);
                 this.keys.splice(index, 1);
@@ -222,7 +222,7 @@ export class Wallet {
         if (!key) {
             return null;
         }
-        return key.sign(payload);        
+        return key.sign(payload);
     }
 
     /**
@@ -241,7 +241,7 @@ export class Wallet {
         if (!key) {
             return false;
         }
-        return key.verify(payload, signature);        
+        return key.verify(payload, signature);
     }
 
     /**
@@ -297,7 +297,7 @@ export class Wallet {
         if (!key) {
             return null;
         }
-        return key.encrypt(message);        
+        return key.encrypt(message);
     }
 
     /**
@@ -313,7 +313,7 @@ export class Wallet {
         if (!key) {
             return null;
         }
-        return key.decrypt(cypher);        
+        return key.decrypt(cypher);
     }
 
 }
